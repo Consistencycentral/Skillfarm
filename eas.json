@@ -1,0 +1,51 @@
+{
+  "cli": {
+    "version": ">= 12.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://eyzfbuisexschgrtkcdv.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5emZidWlzZXhzY2hncnRrY2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NzI2NDksImV4cCI6MjEwMTI0ODY0OX0.McsT4Zl6Exkpb0it6xw5z2bQqPVjbNNB_tNPIdEPK1A"
+      },
+      "channel": "development"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://eyzfbuisexschgrtkcdv.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5emZidWlzZXhzY2hncnRrY2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NzI2NDksImV4cCI6MjEwMTI0ODY0OX0.McsT4Zl6Exkpb0it6xw5z2bQqPVjbNNB_tNPIdEPK1A",
+        "EXPO_PUBLIC_SITE_URL": "https://skillfarm.netlify.app"
+      },
+      "autoIncrement": true,
+      "channel": "preview"
+    },
+    "production": {
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "env": {
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://eyzfbuisexschgrtkcdv.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV5emZidWlzZXhzY2hncnRrY2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU2NzI2NDksImV4cCI6MjEwMTI0ODY0OX0.McsT4Zl6Exkpb0it6xw5z2bQqPVjbNNB_tNPIdEPK1A",
+        "EXPO_PUBLIC_SITE_URL": "https://skillfarm.netlify.app"
+      },
+      "channel": "production"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

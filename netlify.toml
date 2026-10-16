@@ -1,0 +1,27 @@
+# Netlify config for SkillFarm web (Expo export -> dist/).
+#
+# Build is run LOCALLY (Netlify's image would need the EAS/Expo toolchain; the
+# export is only ~1 command):
+#   npx expo export --platform web    # produces ./dist
+#   then: netlify deploy --prod --dir dist   (or drag dist/ onto app.netlify.com/drop)
+#
+# The publish directory is committed? No — dist/ is gitignored. If you connect
+# the repo to Netlify instead of dropping dist, set these in the UI:
+#   Build command: npx expo export --platform web
+#   Publish directory: dist
+
+[build]
+  command = "npx expo export --platform web"
+  publish = "dist"
+
+# ── THE critical bit for an SPA ─────────────────────────────────────────────
+# The landing, /login, /reset-password and /course/<id> are all client-rendered
+# routes. Without this rule, Netlify returns 404 when someone opens or
+# refreshes https://<yoursite>/course/123 or /reset-password directly — which
+# is exactly what the password-reset email and shared course links do.
+# Sending every unknown path to index.html lets expo-router resolve the route
+# in the browser.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
