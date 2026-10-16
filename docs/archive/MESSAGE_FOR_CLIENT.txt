@@ -1,0 +1,12 @@
+Hi, one small 2-minute step is needed on your side (only the Supabase owner can do it):
+
+1. Open https://supabase.com/dashboard and open the SkillFarm project.
+2. Left menu -> "SQL Editor" -> "New query".
+3. Open the attached file RUN_THIS_IN_SUPABASE.sql, copy ALL of it, paste it in the editor.
+4. Click "Run". It should say "Success". (Safe to run twice.)
+
+This fixes: "stack depth limit exceeded" when saving a course, Approve not working,
+seat booking and the payment status flow.
+
+If you prefer, add me as a team member in Supabase (Organization -> Team -> Invite)
+and I will run it for you.
