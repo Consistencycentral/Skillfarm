@@ -1,0 +1,119 @@
+{
+  "expo": {
+    "name": "SkillFarm",
+    "slug": "skillfarm",
+    "version": "1.7.4",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "skillfarm",
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow SkillFarm to scan attendance QR codes and paper learning documents."
+        }
+      ],
+      "expo-notifications",
+      "expo-local-authentication",
+      "expo-updates",
+      "@react-native-google-signin/google-signin"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.skillfarm.app",
+      "associatedDomains": [
+        "applinks:skillfarm.netlify.app"
+      ],
+      "entitlements": {
+        "com.apple.developer.associated-domains": [
+          "applinks:skillfarm.netlify.app"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1F6B45",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.skillfarm.app",
+      "versionCode": 29,
+      "predictiveBackGestureEnabled": false,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "skillfarm.netlify.app",
+              "pathPrefix": "/course"
+            },
+            {
+              "scheme": "https",
+              "host": "skillfarm.netlify.app",
+              "pathPrefix": "/org"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        },
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "skillfarm.netlify.app",
+              "pathPrefix": "/course"
+            },
+            {
+              "scheme": "https",
+              "host": "skillfarm.netlify.app",
+              "pathPrefix": "/org"
+            },
+            {
+              "scheme": "https",
+              "host": "skillfarm.netlify.app",
+              "pathPrefix": "/ticket"
+            },
+            {
+              "scheme": "https",
+              "host": "skillfarm.netlify.app",
+              "pathPrefix": "/attendance"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ],
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "132d64ae-e7ee-4b0a-89af-1567cab324cf"
+      }
+    },
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/132d64ae-e7ee-4b0a-89af-1567cab324cf"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
+  }
+}
