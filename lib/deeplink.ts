@@ -18,7 +18,7 @@
 import { createURL } from 'expo-linking';
 import { Platform } from 'react-native';
 
-// Root cause of the "share still shows the Netlify link" bug: the web export
+// Root cause of the "share still showed the old domain" bug: the web export
 // is built WITHOUT EXPO_PUBLIC_SITE_URL injected (local `expo export` doesn't
 // read eas.json), so SITE_URL was undefined and shares fell back to
 // createURL()/stale env values. The production web origin is stable, so it is

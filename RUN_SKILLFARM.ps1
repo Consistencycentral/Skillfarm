@@ -1,7 +1,7 @@
 # SkillFarm - run / build helper
 # Put this file inside the ready_project folder (next to package.json), then:
 #   Run in browser (test):      .\RUN_SKILLFARM.ps1
-#   Build for Netlify (dist):   .\RUN_SKILLFARM.ps1 -Build
+#   Build web (dist):   .\RUN_SKILLFARM.ps1 -Build   → then: npm run deploy:web
 #   Android phone (Expo Go):    .\RUN_SKILLFARM.ps1 -Android
 
 param(
