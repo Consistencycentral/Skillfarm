@@ -47,7 +47,7 @@ if ($Build) {
   Write-Host "Building web version into .\dist ..." -ForegroundColor Cyan
   npx.cmd expo export --platform web --clear
   Write-Host ""
-  Write-Host "Done. Upload the 'dist' folder to Netlify (app.netlify.com/drop)." -ForegroundColor Green
+  Write-Host "Done. Deploy with: npm run deploy:web (uploads dist/ to skillfarm.pages.dev)." -ForegroundColor Green
   Write-Host "Clients must hard-refresh (Ctrl+Shift+R) after deploy." -ForegroundColor Green
 }
 elseif ($Android) {

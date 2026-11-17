@@ -1,5 +1,4 @@
-# Netlify SPA fallback — lives in public/ so `expo export` copies it INTO
-# dist/ (a drag-and-drop deploy only uploads what's inside dist/, which is why
-# a repo-root netlify.toml never reaches Netlify). Without this, direct opens
-# of /login, /reset-password, /course/<id> and /org/<id> return 404.
+# SPA fallback for Cloudflare Pages — lives in public/ so `expo export` copies
+# it INTO dist/. Without it, direct opens of /login, /reset-password,
+# /course/<id> and /org/<id> return 404 (expo-router resolves them client-side).
 /*    /index.html   200
