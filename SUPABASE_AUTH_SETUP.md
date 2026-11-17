@@ -14,7 +14,7 @@ Keep this as the value of `EXPO_PUBLIC_SUPABASE_URL`. Do not append `/rest/v1/`.
 
 Add these redirect URLs:
 
-- `https://skillfarm.netlify.app/auth/callback`
+- `https://skillfarm.pages.dev/auth/callback`
 - `skillfarm://auth/callback`
 - Your local web URL while developing, for example `http://localhost:8081/auth/callback`
 
@@ -60,4 +60,4 @@ Never put a Supabase `service_role` key in the Expo app.
 
 For deployed password-reset web links, optionally set:
 
-`EXPO_PUBLIC_SITE_URL=https://skillfarm.netlify.app`
+`EXPO_PUBLIC_SITE_URL=https://skillfarm.pages.dev`

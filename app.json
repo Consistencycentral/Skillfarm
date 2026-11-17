@@ -24,11 +24,11 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.skillfarm.app",
       "associatedDomains": [
-        "applinks:skillfarm.netlify.app"
+        "applinks:skillfarm.pages.dev"
       ],
       "entitlements": {
         "com.apple.developer.associated-domains": [
-          "applinks:skillfarm.netlify.app"
+          "applinks:skillfarm.pages.dev"
         ]
       }
     },
@@ -49,12 +49,12 @@
           "data": [
             {
               "scheme": "https",
-              "host": "skillfarm.netlify.app",
+              "host": "skillfarm.pages.dev",
               "pathPrefix": "/course"
             },
             {
               "scheme": "https",
-              "host": "skillfarm.netlify.app",
+              "host": "skillfarm.pages.dev",
               "pathPrefix": "/org"
             }
           ],
@@ -69,22 +69,22 @@
           "data": [
             {
               "scheme": "https",
-              "host": "skillfarm.netlify.app",
+              "host": "skillfarm.pages.dev",
               "pathPrefix": "/course"
             },
             {
               "scheme": "https",
-              "host": "skillfarm.netlify.app",
+              "host": "skillfarm.pages.dev",
               "pathPrefix": "/org"
             },
             {
               "scheme": "https",
-              "host": "skillfarm.netlify.app",
+              "host": "skillfarm.pages.dev",
               "pathPrefix": "/ticket"
             },
             {
               "scheme": "https",
-              "host": "skillfarm.netlify.app",
+              "host": "skillfarm.pages.dev",
               "pathPrefix": "/attendance"
             }
           ],

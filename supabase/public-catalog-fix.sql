@@ -137,5 +137,5 @@ order by c.created_at desc;
 -- where id = '<provider id>';
 
 -- 4b) The exact URL test, using the first course id:
--- select 'https://skillfarm.netlify.app/course/' || id as test_url
+-- select 'https://skillfarm.pages.dev/course/' || id as test_url
 -- from public.public_courses limit 1;

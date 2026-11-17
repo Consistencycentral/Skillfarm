@@ -34,7 +34,7 @@ In **Authentication → Providers → Google**:
 
 In **Authentication → URL Configuration → Redirect URLs**, allow:
 
-- `https://skillfarm.netlify.app/auth/callback`
+- `https://skillfarm.pages.dev/auth/callback`
 - `skillfarm://auth/callback`
 - your local web callback if you test locally, for example `http://localhost:8081/auth/callback`
 

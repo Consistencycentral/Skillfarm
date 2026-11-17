@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["TEAMID.com.skillfarm.app"],
+        "components": [
+          { "/": "/course/*", "comment": "Shared course pages" },
+          { "/": "/org/*", "comment": "Shared organization pages" },
+          { "/": "/reset-password", "comment": "Password recovery" },
+          { "/": "/", "comment": "Landing" }
+        ]
+      }
+    ]
+  }
+}

@@ -1,12 +1,12 @@
 // ===========================================================================
 // SkillFarm — app-link claim files (Android App Links + iOS Universal Links).
 //
-// These make https://skillfarm.netlify.app/course/<id> open the INSTALLED app
-// at the OS level. expo export copies public/ into dist/, and Netlify serves
-// dist/, so after each deploy the files live at:
-//   https://skillfarm.netlify.app/.well-known/assetlinks.json
-//   https://skillfarm.netlify.app/.well-known/apple-app-site-association
-// Both must be served as plain content with status 200 (Netlify does this).
+// These make https://skillfarm.pages.dev/course/<id> open the INSTALLED app
+// at the OS level. expo export copies public/ into dist/, and Cloudflare
+// Pages serves dist/, so after each deploy the files live at:
+//   https://skillfarm.pages.dev/.well-known/assetlinks.json
+//   https://skillfarm.pages.dev/.well-known/apple-app-site-association
+// Both must be served as plain content with status 200 (Cloudflare Pages does this).
 //
 // ── HOW TO FILL THE ANDROID PLACEHOLDER ────────────────────────────────────
 //   npx eas credentials -p android
@@ -28,8 +28,8 @@
 //
 // ── VERIFY AFTER DEPLOY ───────────────────────────────────────────────────
 //   Android: https://developers.google.com/digital-asset-links/tools/generator
-//   iOS:     https://app-site-association.cdn-apple.com/a/v1/skillfarm.netlify.app
-//   Then install the APK, open skillfarm.netlify.app/course/<id> in Chrome —
+//   iOS:     https://app-site-association.cdn-apple.com/a/v1/skillfarm.pages.dev
+//   Then install the APK, open skillfarm.pages.dev/course/<id> in Chrome —
 //   it should offer/launch the app directly. (Google re-verifies periodically;
 //   first verification can take a few minutes after the deploy.)
 // ===========================================================================
