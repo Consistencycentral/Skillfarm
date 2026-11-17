@@ -49,6 +49,20 @@ toolchain), not the website. APK size unchanged by this migration.
   token system (`constants/theme.ts`) and clean v12.14 UI; per operator's note
   "don't disturb anything that works". Recommended as a separate later workstream.
 
+## W4 — Share links fixed (2026-11-18, later session)
+User-reported: copied course link still showed the old Netlify URL.
+**Root cause:** local `expo export` doesn't read eas.json, so
+`EXPO_PUBLIC_SITE_URL` was never injected → `SITE_URL` undefined → shares
+fell back to `createURL()` (scheme links / stale env).
+**Fix:** `lib/deeplink.ts` now resolves SITE_URL = env → `window.location.origin`
+(web) → inlined `https://skillfarm.pages.dev`. `lib/ticket.ts` reuses it.
+Verified in the live bundle: `SITE_URL = window.location.origin ?? pages.dev`,
+0 netlify refs in the served JS.
+**ACCEPT W3:** grep -ri netlify over shipped code (excl. historical changelogs)
+= 0. **ACCEPT W4:** all share routes (/course,/org,/ticket,/auth/callback)
+return 200 with SPA fallback; OG preview is static meta (expo default) —
+per-route dynamic OG requires a serverless worker, deferred by design.
+
 ## BLOCKED (1 item)
 - `git push origin main` → 403: the stored GitHub PAT has no write access to
   `Consistencycentral/Skillfarm`. Fix: create a fine-grained PAT with
