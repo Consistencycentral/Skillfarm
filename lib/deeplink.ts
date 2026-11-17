@@ -16,17 +16,28 @@
 //     which is exactly why setting EXPO_PUBLIC_SITE_URL is the upgrade path.
 // ===========================================================================
 import { createURL } from 'expo-linking';
+import { Platform } from 'react-native';
 
-const SITE_URL = process.env.EXPO_PUBLIC_SITE_URL;
+// Root cause of the "share still shows the Netlify link" bug: the web export
+// is built WITHOUT EXPO_PUBLIC_SITE_URL injected (local `expo export` doesn't
+// read eas.json), so SITE_URL was undefined and shares fell back to
+// createURL()/stale env values. The production web origin is stable, so it is
+// inlined as the fallback — same env-first + inlined-fallback pattern as
+// lib/supabase.ts. On native the env var (injected by EAS) still wins so a
+// custom domain can replace pages.dev without a code change.
+const INLINED_SITE_URL = 'https://skillfarm.pages.dev';
+
+const SITE_URL: string | undefined =
+  process.env.EXPO_PUBLIC_SITE_URL ??
+  // On web there is exactly one correct answer: the origin the site is
+  // actually served from — even if someone previews a build elsewhere.
+  (Platform.OS === 'web' && typeof window !== 'undefined'
+    ? window.location.origin
+    : INLINED_SITE_URL);
 
 export function courseShareUrl(id: string): string {
   // Deployed web origin wins (universal link, opens app or falls back to web).
   if (SITE_URL) return `${SITE_URL.replace(/\/+$/, '')}/course/${id}`;
-  // createURL WITHOUT a forced scheme lets expo-linking emit the link shape
-  // valid for the current runtime — the Expo Go `exp://` deep link during
-  // development, the standalone `skillfarm://course/<id>` in the EAS build, and
-  // the real `https://…/course/<id>` on web — instead of a raw scheme that
-  // Expo Go can't open.
   return createURL(`/course/${id}`);
 }
 
