@@ -63,6 +63,24 @@ Verified in the live bundle: `SITE_URL = window.location.origin ?? pages.dev`,
 return 200 with SPA fallback; OG preview is static meta (expo default) —
 per-route dynamic OG requires a serverless worker, deferred by design.
 
+## W4 (final) — share links are hard-blocked from ever being netlify
+Root cause of "still netlify in the app": the APK on the phone was built when
+`eas.json` still had `EXPO_PUBLIC_SITE_URL=https://skillfarm.netlify.app`, so the
+value was **baked into its JS bundle**. Web was fixed but the phone kept the old
+string.
+Fix:
+1. `lib/deeplink.ts` rewritten — a `*.netlify.app` host is never honoured.
+   Resolution: sanitised env → `window.location.origin` (web) → inlined
+   `https://skillfarm.pages.dev`. `courseShareUrl`, `orgShareUrl`, `siteUrl`,
+   `authRedirectUrl` all use it; `canonicalShareUrl()` rewrites any legacy
+   netlify URL (stored data included) to pages.dev.
+2. `lib/ticket.ts` uses the same constant.
+3. Web rebuilt + deployed (live bundle: 0 netlify refs, contains the block regex).
+4. **OTA updates published to both channels** so installed APKs self-heal:
+   - preview: update group `deddd301-571e-4285-9ef8-e56550a0113a`
+   - production: update group `d87bcf49-c5b0-4dbd-8d6c-a1a52c90f02a`
+   (runtime 1.7.4). The APK picks this up on next cold start with network.
+
 ## BLOCKED (1 item)
 - `git push origin main` → 403: the stored GitHub PAT has no write access to
   `Consistencycentral/Skillfarm`. Fix: create a fine-grained PAT with
