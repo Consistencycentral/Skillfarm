@@ -92,6 +92,31 @@ shaking it out would break route transitions.
 A new APK cannot be measured until an EAS build runs — that consumes build
 minutes and is the operator's call (ASSUMPTIONS question 3).
 
+
+## 4b. APK — build 33 measured (2026-11-18)
+
+| | |
+|---|---|
+| File | `application-…apk` (EAS artifact) |
+| **Size** | **104,952,827 B = 100.1 MB** |
+| versionCode | 33 |
+| Profile | `preview` (universal APK, internal distribution) |
+| Artifact valid until | 2026-12-02 |
+
+**Verdict: 0.1 MB over the ≤100 MB target.** ProGuard + resource shrinking
+were applied (config verified), but a *universal* APK still bundles four
+architectures — `arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64`. The x86 slices
+exist only for emulators and are pure payload on a phone.
+
+**Fix in flight:** `plugins/withAbiFilters.js` restricts Gradle to
+`arm64-v8a` + `armeabi-v7a` (verified present in the generated
+`android/app/build.gradle`). Expected result ≈ 55–70 MB, comfortably inside the
+target, with no device compatibility loss (every Android phone since ~2016 is
+arm64; older ones use armeabi-v7a).
+
+Note: the production profile ships an **AAB**, where Play already splits by
+architecture/device, so store installs are far smaller than this test APK.
+
 ---
 
 ## 5. Not done, and why
