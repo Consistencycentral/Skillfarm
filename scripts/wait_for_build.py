@@ -12,7 +12,8 @@ from datetime import datetime
 from pathlib import Path
 
 PROJECT = Path(r"C:\Users\PRITHIVIRAJ\Desktop\SKILLfarm - Copy")
-BUILD_ID = "2261ef9e-7cb5-486a-acdd-1f9ed80a4bc8"
+# Optional argv[1]: build id. Without it, tracks the newest Android build.
+BUILD_ID = sys.argv[1] if len(sys.argv) > 1 else None
 RESULT = PROJECT / "build-result.json"
 
 
@@ -29,10 +30,12 @@ def state():
         builds = json.loads(out[start:])
     except json.JSONDecodeError:
         return None
-    for b in builds:
-        if b.get("id") == BUILD_ID:
-            return b
-    return None
+    if BUILD_ID:
+        for b in builds:
+            if b.get("id") == BUILD_ID:
+                return b
+        return None
+    return builds[0] if builds else None
 
 
 last = None

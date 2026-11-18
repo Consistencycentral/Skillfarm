@@ -69,7 +69,65 @@ website. Web payload is 5.4 MB.
 
 ---
 
+### 3.1 Top 20 largest files in the deploy (measured)
+
+`dist/` totals **4.91 MB across 36 files**. Everything else in the repo
+(`node_modules` ~1.1 GB, `.git` 1 MB) is build-time only and never downloaded.
+
+| # | Bytes | Size | File | Loaded |
+|---:|---:|---:|---|---|
+| 1 | 2,889,068 | 2.76 MB | `_expo/static/js/web/entry-*.js` | always (app code) |
+| 2 | 1,237,063 | 1.18 MB | `_expo/static/js/web/xlsx-*.js` | only on Excel export |
+| 3 | 454,063 | 0.43 MB | `_expo/static/js/web/jspdf.es-*.js` | only on PDF export |
+| 4 | 202,155 | 0.19 MB | `_expo/static/js/web/html2canvas-*.js` | only on PDF export |
+| 5 | 173,945 | 0.17 MB | `_expo/static/js/web/index-*.js` | route chunk |
+| 6 | 46,702 | 0.04 MB | `og-image.png` | social crawlers |
+| 7 | 41,280 | 0.04 MB | `vendor/…/Ionicons.*.ttf` | first icon paint |
+| 8 | 32,002 | 0.03 MB | `jspdf.plugin-*.js` | PDF only |
+| 9 | 31,546 | 0.03 MB | `purify-*.js` | rich text |
+| 10 | 14,510 | 0.01 MB | `favicon.ico` | always |
+| 11 | 9,456 | 9 KB | `vendor/expo-router/assets/arrow_down.*.png` | navigation |
+| 12 | 4,752 | 5 KB | `vendor/expo-router/assets/unmatched.*.png` | 404 route |
+| 13 | 2,728 | 3 KB | `sitemap.xml` | crawlers |
+| 14 | 1,215 | 1 KB | `index.html` | always |
+| 15 | 1,182 | 1 KB | `_headers` | edge config |
+| 16 | 928 | 1 KB | `vendor/…/search-icon.*.png` | header search |
+| 17 | 729 | 1 KB | `_redirects` | edge config |
+| 18 | 653 | 1 KB | `vendor/…/back-icon-mask.*.png` | navigation |
+| 19 | 645 | 1 KB | `vendor/…/clear-icon.*.png` | inputs |
+| 20 | 502 | 1 KB | `vendor/…/clear-icon@3x.png` | inputs |
+
+**Reading:** only three files are on the critical path (#1, #7, #14). The three
+export libraries (#2–#4 = 1.8 MB) are lazy chunks — they must never be imported
+eagerly. `entry-*.js` grew from 2.06 MB to 2.76 MB as the app added screens
+(ticket, attendance, analytics, materials).
+
+---
+
 ## 4. Defects found (with evidence) — all fixed unless marked otherwise
+
+
+### 4.1 Where each fix lives (file:line)
+
+| Defect | Fix location |
+|---|---|
+| D1 icon fonts not uploaded | `scripts/post-export-fix.mjs:30` (vendor move), `:103` (font prune) |
+| D2 repo could not build | `lib/supabase.ts`, `lib/storage.ts`, `lib/ticket.ts`, `lib/typography.ts`, `lib/updatesSeen.ts` |
+| D3 share links → netlify | `lib/deeplink.ts:27` (host block), `:48` (origin resolution), `:65` (`canonicalShareUrl`), `lib/ticket.ts:21`, `:26` |
+| D4 claim files missing | `public/.well-known/assetlinks.json`, `public/.well-known/apple-app-site-association` |
+| D5 SPA rule shadowing assets | `public/_redirects:13` |
+| D6 HTML injected into AASA | `functions/_middleware.js:170` |
+| D7 stale 45 MB dist | `package.json` → `build:web` (rm -rf dist first) |
+| D8 no social metadata | `functions/_middleware.js:46` (course meta), `:107` (`inject`), `:147` (preload), `public/og-image.png` |
+| D9 unused icon families | `scripts/post-export-fix.mjs:103` |
+| D10 hardcoded colours | `constants/theme.ts` is the only intended source; 15 remain across screens |
+| D11 no branded 404 | `app/+not-found.tsx:15` |
+| D12 GitHub push denied | `BLOCKED.md` B1 |
+| Contrast (AA) | `constants/theme.ts:23` (accent), `:40` (success), `:41` (warning) |
+| Dark/motion/touch tokens | `constants/theme.ts:56`, `:126` |
+| Web focus ring | `lib/typography.ts:38` |
+| APK ABI bloat | `plugins/withAbiFilters.js:31`, `app.json:27` (ProGuard) |
+| Sitemap | `scripts/gen-sitemap.mjs:46` |
 
 ### D1 — Icon fonts never reached the CDN (SEVERE, fixed)
 *Symptom:* every icon invisible on the Cloudflare deploy while the same code

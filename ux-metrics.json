@@ -1,0 +1,806 @@
+[
+ {
+  "screen": "app/course/[id].tsx",
+  "lines": 868,
+  "kb": 49.9,
+  "hex": 3,
+  "font_sizes": [
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   18,
+   19,
+   21,
+   23,
+   24
+  ],
+  "paddings": [
+   3,
+   5,
+   6,
+   8,
+   10,
+   11,
+   12,
+   14,
+   16,
+   20,
+   24,
+   120
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 5,
+  "labelled": 4,
+  "icons": 16
+ },
+ {
+  "screen": "app/(provider)/course-edit.tsx",
+  "lines": 609,
+  "kb": 30.9,
+  "hex": 1,
+  "font_sizes": [
+   11,
+   12,
+   13,
+   14,
+   15,
+   16
+  ],
+  "paddings": [
+   8,
+   10,
+   12,
+   14,
+   16
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 10,
+  "labelled": 2,
+  "icons": 7
+ },
+ {
+  "screen": "app/(provider)/profile.tsx",
+  "lines": 529,
+  "kb": 25.6,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   13,
+   14,
+   15,
+   16,
+   17
+  ],
+  "paddings": [
+   7,
+   8,
+   12,
+   13,
+   14,
+   16,
+   40
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 9,
+  "labelled": 4,
+  "icons": 9
+ },
+ {
+  "screen": "app/(provider)/students.tsx",
+  "lines": 430,
+  "kb": 24.8,
+  "hex": 0,
+  "font_sizes": [
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   18,
+   22
+  ],
+  "paddings": [
+   3,
+   6,
+   7,
+   8,
+   10,
+   12,
+   14,
+   16,
+   18,
+   24
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 8,
+  "labelled": 3,
+  "icons": 7
+ },
+ {
+  "screen": "app/login.tsx",
+  "lines": 411,
+  "kb": 19.3,
+  "hex": 1,
+  "font_sizes": [
+   12,
+   13,
+   15
+  ],
+  "paddings": [
+   20,
+   22,
+   32
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 3,
+  "labelled": 2,
+  "icons": 2
+ },
+ {
+  "screen": "app/(student)/profile.tsx",
+  "lines": 397,
+  "kb": 18.5,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   13,
+   14,
+   16,
+   17,
+   22,
+   30
+  ],
+  "paddings": [
+   2,
+   6,
+   12,
+   13,
+   14,
+   16,
+   40
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 5,
+  "labelled": 5,
+  "icons": 7
+ },
+ {
+  "screen": "app/materials/[courseId].tsx",
+  "lines": 352,
+  "kb": 18.5,
+  "hex": 0,
+  "font_sizes": [
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   17,
+   18,
+   21
+  ],
+  "paddings": [
+   4,
+   8,
+   9,
+   11,
+   12,
+   13,
+   15,
+   16,
+   18,
+   36,
+   45
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 6,
+  "labelled": 2,
+  "icons": 8
+ },
+ {
+  "screen": "app/org/[id].tsx",
+  "lines": 261,
+  "kb": 12.6,
+  "hex": 0,
+  "font_sizes": [
+   13,
+   14,
+   15,
+   16,
+   17,
+   22
+  ],
+  "paddings": [
+   6,
+   10,
+   11,
+   12,
+   14,
+   16,
+   18,
+   20,
+   24
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 5,
+  "labelled": 0,
+  "icons": 6
+ },
+ {
+  "screen": "app/(student)/browse.tsx",
+  "lines": 258,
+  "kb": 12.7,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   13,
+   15
+  ],
+  "paddings": [
+   0,
+   4,
+   8,
+   9,
+   12,
+   13,
+   14,
+   16,
+   18,
+   20,
+   24,
+   28
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 2,
+  "labelled": 2,
+  "icons": 3
+ },
+ {
+  "screen": "app/(student)/my-registrations.tsx",
+  "lines": 236,
+  "kb": 11.9,
+  "hex": 0,
+  "font_sizes": [
+   10,
+   13,
+   22
+  ],
+  "paddings": [
+   8,
+   10,
+   12,
+   16,
+   18,
+   24
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 1,
+  "labelled": 1,
+  "icons": 6
+ },
+ {
+  "screen": "app/(provider)/attendance-scan.tsx",
+  "lines": 231,
+  "kb": 13.0,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   13,
+   14,
+   18,
+   23,
+   28
+  ],
+  "paddings": [
+   7,
+   9,
+   10,
+   12,
+   13,
+   14,
+   16,
+   20,
+   22,
+   24,
+   28
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 8,
+  "labelled": 1,
+  "icons": 3
+ },
+ {
+  "screen": "app/payment/[id].tsx",
+  "lines": 227,
+  "kb": 15.5,
+  "hex": 1,
+  "font_sizes": [
+   11,
+   12,
+   13,
+   14,
+   15,
+   17,
+   18,
+   20,
+   23,
+   27
+  ],
+  "paddings": [
+   4,
+   6,
+   8,
+   10,
+   12,
+   14,
+   16,
+   17,
+   18,
+   20,
+   22,
+   24,
+   40
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 6,
+  "labelled": 0,
+  "icons": 8
+ },
+ {
+  "screen": "app/(provider)/courses.tsx",
+  "lines": 219,
+  "kb": 12.7,
+  "hex": 3,
+  "font_sizes": [
+   11,
+   12,
+   13,
+   14,
+   15,
+   23
+  ],
+  "paddings": [
+   4,
+   6,
+   8,
+   9,
+   10,
+   12,
+   14,
+   16,
+   18,
+   24
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 6,
+  "labelled": 4,
+  "icons": 7
+ },
+ {
+  "screen": "app/(student)/courses.tsx",
+  "lines": 179,
+  "kb": 9.4,
+  "hex": 0,
+  "font_sizes": [
+   10,
+   12,
+   13,
+   16
+  ],
+  "paddings": [
+   2,
+   4,
+   5,
+   6,
+   9,
+   12,
+   14,
+   16,
+   24
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 4,
+  "labelled": 1,
+  "icons": 2
+ },
+ {
+  "screen": "app/(provider)/home.tsx",
+  "lines": 177,
+  "kb": 10.6,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   13,
+   14,
+   24,
+   30
+  ],
+  "paddings": [
+   8,
+   10,
+   14,
+   16,
+   24
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 2,
+  "labelled": 2,
+  "icons": 6
+ },
+ {
+  "screen": "app/reset-password.tsx",
+  "lines": 142,
+  "kb": 5.8,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   13,
+   14,
+   16
+  ],
+  "paddings": [
+   12,
+   14,
+   20,
+   24
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 3,
+  "labelled": 0,
+  "icons": 0
+ },
+ {
+  "screen": "app/forgot-password.tsx",
+  "lines": 128,
+  "kb": 5.3,
+  "hex": 0,
+  "font_sizes": [
+   13,
+   14,
+   16
+  ],
+  "paddings": [
+   12,
+   14,
+   20,
+   24
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 4,
+  "labelled": 0,
+  "icons": 0
+ },
+ {
+  "screen": "app/ticket/[id].tsx",
+  "lines": 117,
+  "kb": 12.6,
+  "hex": 3,
+  "font_sizes": [
+   11,
+   12,
+   13,
+   16,
+   20,
+   21,
+   25
+  ],
+  "paddings": [
+   12,
+   14,
+   16,
+   18,
+   24,
+   32
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 3,
+  "labelled": 0,
+  "icons": 8
+ },
+ {
+  "screen": "app/(provider)/course-materials/[courseId].tsx",
+  "lines": 113,
+  "kb": 16.2,
+  "hex": 0,
+  "font_sizes": [
+   11,
+   12,
+   13,
+   16,
+   17,
+   18,
+   21,
+   25
+  ],
+  "paddings": [
+   8,
+   12,
+   13,
+   15,
+   16,
+   18,
+   20,
+   28,
+   40
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 11,
+  "labelled": 3,
+  "icons": 11
+ },
+ {
+  "screen": "app/language-select.tsx",
+  "lines": 91,
+  "kb": 5.6,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   14,
+   15,
+   16
+  ],
+  "paddings": [
+   10,
+   13,
+   14,
+   15,
+   16,
+   24,
+   48
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 1,
+  "labelled": 0,
+  "icons": 1
+ },
+ {
+  "screen": "app/(student)/saved.tsx",
+  "lines": 89,
+  "kb": 3.7,
+  "hex": 0,
+  "font_sizes": [
+   13,
+   28
+  ],
+  "paddings": [
+   16,
+   30
+  ],
+  "loading": true,
+  "empty": true,
+  "error": true,
+  "pressable": 0,
+  "labelled": 0,
+  "icons": 0
+ },
+ {
+  "screen": "app/role-select.tsx",
+  "lines": 84,
+  "kb": 5.6,
+  "hex": 0,
+  "font_sizes": [
+   14
+  ],
+  "paddings": [
+   16,
+   20,
+   22,
+   24,
+   40
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 2,
+  "labelled": 1,
+  "icons": 2
+ },
+ {
+  "screen": "app/index.tsx",
+  "lines": 74,
+  "kb": 3.2,
+  "hex": 0,
+  "font_sizes": [
+   32
+  ],
+  "paddings": [],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 0,
+  "labelled": 0,
+  "icons": 0
+ },
+ {
+  "screen": "app/ai-assistant.tsx",
+  "lines": 71,
+  "kb": 6.5,
+  "hex": 2,
+  "font_sizes": [
+   10,
+   11,
+   12,
+   13,
+   14,
+   17,
+   19
+  ],
+  "paddings": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   28
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 3,
+  "labelled": 2,
+  "icons": 5
+ },
+ {
+  "screen": "app/downloads/index.tsx",
+  "lines": 69,
+  "kb": 4.2,
+  "hex": 0,
+  "font_sizes": [
+   11,
+   13,
+   18,
+   26
+  ],
+  "paddings": [
+   13,
+   16,
+   40,
+   45
+  ],
+  "loading": false,
+  "empty": false,
+  "error": true,
+  "pressable": 2,
+  "labelled": 2,
+  "icons": 4
+ },
+ {
+  "screen": "app/(provider)/analytics.tsx",
+  "lines": 64,
+  "kb": 6.8,
+  "hex": 0,
+  "font_sizes": [
+   12,
+   13,
+   14,
+   15,
+   18,
+   24,
+   38
+  ],
+  "paddings": [
+   10,
+   12,
+   14,
+   15,
+   16,
+   18,
+   28
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 2,
+  "labelled": 1,
+  "icons": 2
+ },
+ {
+  "screen": "app/attendance/[id].tsx",
+  "lines": 63,
+  "kb": 3.8,
+  "hex": 1,
+  "font_sizes": [
+   14,
+   22
+  ],
+  "paddings": [
+   13,
+   24,
+   28
+  ],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 2,
+  "labelled": 0,
+  "icons": 1
+ },
+ {
+  "screen": "app/(student)/notifications.tsx",
+  "lines": 55,
+  "kb": 4.8,
+  "hex": 0,
+  "font_sizes": [
+   10,
+   12,
+   13,
+   14,
+   28
+  ],
+  "paddings": [
+   4,
+   8,
+   14,
+   16,
+   32
+  ],
+  "loading": true,
+  "empty": true,
+  "error": false,
+  "pressable": 1,
+  "labelled": 0,
+  "icons": 2
+ },
+ {
+  "screen": "app/auth/callback.tsx",
+  "lines": 37,
+  "kb": 1.9,
+  "hex": 0,
+  "font_sizes": [
+   14
+  ],
+  "paddings": [],
+  "loading": true,
+  "empty": false,
+  "error": true,
+  "pressable": 0,
+  "labelled": 0,
+  "icons": 0
+ }
+]
