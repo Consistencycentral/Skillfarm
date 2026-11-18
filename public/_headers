@@ -1,0 +1,32 @@
+# Cloudflare Pages headers for SkillFarm.
+# Docs: https://developers.cloudflare.com/pages/configuration/headers/
+
+# Expo's export filenames contain a content hash, so they can be cached forever.
+/_expo/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Icon fonts / images moved here by scripts/post-export-fix.mjs (hashed names).
+/vendor/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The shell must always be revalidated, otherwise a deploy is invisible.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Android / iOS app-link claim files: no caching so re-verification is instant.
+/.well-known/*
+  Cache-Control: public, max-age=300
+  Content-Type: application/json
+
+# Baseline security headers (no CSP here: Expo needs inline styles + eval-free
+# bundles, and a wrong CSP would blank the app — add one only with testing).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(self), camera=(self), microphone=(), payment=()

@@ -60,7 +60,51 @@ const walk = (dir) => {
 walk(dist);
 console.log(`[post-export] rewrote ${hits} asset URL(s) in ${files} bundle file(s)`);
 
-// 3. Sanity checks that Cloudflare needs.
+// 3. Prune icon fonts from families the app never imports.
+//    @expo/vector-icons barrel-imports every family's TTF (~4 MB of dead
+//    weight per deploy) even though only the families named in our own source
+//    are actually rendered. We scan app/ components/ lib/ for family names and
+//    keep only those fonts, so adding e.g. FontAwesome later keeps working
+//    automatically.
+const FAMILIES = [
+  'Ionicons', 'MaterialIcons', 'MaterialCommunityIcons', 'Feather', 'EvilIcons',
+  'FontAwesome', 'FontAwesome5', 'FontAwesome6', 'AntDesign', 'Entypo',
+  'Fontisto', 'Foundation', 'Octicons', 'SimpleLineIcons', 'Zocial',
+];
+const sourceText = [];
+const readSources = (dir) => {
+  if (!existsSync(dir)) return;
+  for (const name of readdirSync(dir)) {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) { readSources(p); continue; }
+    if (/\.(ts|tsx|js|jsx)$/.test(name)) sourceText.push(readFileSync(p, 'utf8'));
+  }
+};
+for (const d of ['app', 'components', 'lib', 'constants']) readSources(join(root, d));
+const srcText = sourceText.join('\n');
+const usedFamilies = FAMILIES.filter((f) => new RegExp(`\\b${f}\\b`).test(srcText));
+console.log(`[post-export] icon families used: ${usedFamilies.join(', ') || 'none'}`);
+
+let kept = 0, removed = 0, removedBytes = 0;
+const pruneFonts = (dir) => {
+  for (const name of readdirSync(dir)) {
+    const p = join(dir, name);
+    if (statSync(p).isDirectory()) { pruneFonts(p); continue; }
+    if (!/\.(ttf|otf|woff2?)$/i.test(name)) continue;
+    const used = usedFamilies.some((f) => name.startsWith(f));
+    if (used) { kept++; continue; }
+    removedBytes += statSync(p).size;
+    rmSync(p, { force: true });
+    removed++;
+  }
+};
+const fontRoot = join(dist, 'vendor');
+if (existsSync(fontRoot) && usedFamilies.length) {
+  pruneFonts(fontRoot);
+  console.log(`[post-export] fonts kept ${kept}, pruned ${removed} (-${(removedBytes / 1024 / 1024).toFixed(2)} MB)`);
+}
+
+// 4. Sanity checks that Cloudflare needs.
 const mustExist = ['index.html', '_redirects', join('.well-known', 'assetlinks.json'), join('.well-known', 'apple-app-site-association')];
 const missing = mustExist.filter((f) => !existsSync(join(dist, f)));
 if (missing.length) {

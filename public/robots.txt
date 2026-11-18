@@ -1,0 +1,13 @@
+# SkillFarm — robots policy
+# Public marketing + catalogue pages are indexable; signed-in app screens are not.
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /auth/
+Disallow: /(student)/
+Disallow: /(provider)/
+Disallow: /ticket/
+
+Sitemap: https://skillfarm.pages.dev/sitemap.xml
