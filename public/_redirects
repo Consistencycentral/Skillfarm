@@ -1,4 +1,13 @@
-# SPA fallback for Cloudflare Pages — lives in public/ so `expo export` copies
-# it INTO dist/. Without it, direct opens of /login, /reset-password,
-# /course/<id> and /org/<id> return 404 (expo-router resolves them client-side).
-/*    /index.html   200
+# SPA fallback for Cloudflare Pages. Lives in public/ so `expo export` copies it
+# INTO dist/.
+#
+# WHY the target is /index.html (and not "/"):
+#   A rule that rewrites to "/" swallows every static asset too — the font,
+#   og-image, robots.txt and sitemap.xml all start returning the HTML shell
+#   (verified: Ionicons TTF came back as 1215 bytes of text/html). Pointing at
+#   /index.html serves the shell for unknown routes while real files still win.
+#
+#   wrangler logs a cosmetic "infinite loop detected ... ignored" warning for
+#   this rule; it is a false positive from Cloudflare's /index stripping, and
+#   the rule is live in production (all routes verified 200 with real files).
+/*    /index.html    200

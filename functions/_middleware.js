@@ -150,6 +150,11 @@ export async function onRequest(context) {
     // Files (anything with an extension) and non-GET requests are untouched.
     if (!isGet || /\.[a-z0-9]{1,8}$/i.test(url.pathname)) return next();
 
+    // App-link claim files must be served byte-for-byte. iOS requires
+    // apple-app-site-association to have NO extension and raw JSON content, so
+    // it would otherwise be treated as an HTML route and get the shell injected.
+    if (url.pathname.startsWith('/.well-known/')) return next();
+
     const course = url.pathname.match(/^\/course\/([A-Za-z0-9-]{6,})/);
     const org = url.pathname.match(/^\/org\/([A-Za-z0-9-]{6,})/);
 
