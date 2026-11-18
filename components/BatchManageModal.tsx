@@ -128,7 +128,7 @@ export function BatchManageModal({ visible, courseId, onClose, onChanged }: Prop
             <Text style={styles.title}>Manage batches</Text>
             <Text style={styles.subtitle}>Each batch has its own dates, capacity and deadline.</Text>
           </View>
-          <Pressable onPress={onClose} style={styles.close}>
+          <Pressable onPress={onClose} style={styles.close} accessibilityRole="button" accessibilityLabel="Close">
             <Ionicons name="close" size={24} color={theme.colors.text} />
           </Pressable>
         </View>
@@ -150,10 +150,10 @@ export function BatchManageModal({ visible, courseId, onClose, onChanged }: Prop
                     {batch.seats_filled}/{batch.seats_total} seats filled
                   </Text>
                 </View>
-                <Pressable onPress={() => startEdit(batch)} style={styles.iconButton}>
+                <Pressable onPress={() => startEdit(batch)} style={styles.iconButton} accessibilityRole="button" accessibilityLabel="Edit">
                   <Ionicons name="create-outline" size={20} color={theme.colors.primary} />
                 </Pressable>
-                <Pressable onPress={() => remove(batch)} style={styles.iconButton}>
+                <Pressable onPress={() => remove(batch)} style={styles.iconButton} accessibilityRole="button" accessibilityLabel="Delete">
                   <Ionicons name="trash-outline" size={20} color={theme.colors.danger} />
                 </Pressable>
               </View>

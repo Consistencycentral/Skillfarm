@@ -37,7 +37,7 @@ export default function AIAssistantScreen() {
   return (
     <KeyboardAvoidingView style={styles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()} style={styles.back}><Ionicons name="arrow-back" size={21} color={theme.colors.text} /></Pressable>
+        <Pressable onPress={() => router.back()} style={styles.back} accessibilityRole="button" accessibilityLabel="Go back"><Ionicons name="arrow-back" size={21} color={theme.colors.text} /></Pressable>
         <View style={styles.headerIcon}><Ionicons name="sparkles" size={19} color={theme.colors.primary} /></View>
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>Ask SkillFarm</Text>
@@ -59,7 +59,7 @@ export default function AIAssistantScreen() {
       </ScrollView>
       <View style={styles.composer}>
         <TextInput value={question} onChangeText={setQuestion} placeholder="Ask a SkillFarm question…" placeholderTextColor={theme.colors.textMuted} style={styles.input} multiline maxLength={1200} onSubmitEditing={() => submit()} />
-        <Pressable onPress={() => submit()} disabled={!question.trim() || loading} style={[styles.send, (!question.trim() || loading) && styles.sendDisabled]}><Ionicons name="arrow-up" size={20} color="#fff" /></Pressable>
+        <Pressable onPress={() => submit()} disabled={!question.trim() || loading} style={[styles.send, (!question.trim() || loading) && styles.sendDisabled]} accessibilityRole="button" accessibilityLabel="Arrow up"><Ionicons name="arrow-up" size={20} color="#fff" /></Pressable>
       </View>
     </KeyboardAvoidingView>
   );

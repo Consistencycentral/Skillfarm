@@ -498,7 +498,7 @@ export default function CourseEditScreen() {
                 <Text style={styles.certFileHint}>Tap to preview</Text>
               </Pressable>
               <Pressable onPress={onUploadCertificate} hitSlop={8} disabled={uploadingCert}><Text style={styles.certFileAction}>Replace</Text></Pressable>
-              <Pressable onPress={onRemoveCertificate} hitSlop={8}><Ionicons name="trash-outline" size={20} color={theme.colors.danger} /></Pressable>
+              <Pressable onPress={onRemoveCertificate} hitSlop={8} accessibilityRole="button" accessibilityLabel="Delete"><Ionicons name="trash-outline" size={20} color={theme.colors.danger} /></Pressable>
             </View>
           ) : (
             <Pressable style={styles.certUpload} onPress={onUploadCertificate} disabled={uploadingCert}>
@@ -515,7 +515,7 @@ export default function CourseEditScreen() {
         {images.map((img, idx) => (
           <View key={img.path} style={styles.imageThumb}>
             <Image source={{ uri: img.url }} style={styles.imageThumb} />
-            <Pressable onPress={() => onRemoveImage(idx)} style={styles.imageRemove}>
+            <Pressable onPress={() => onRemoveImage(idx)} style={styles.imageRemove} accessibilityRole="button" accessibilityLabel="Clear">
               <Ionicons name="close-circle" size={22} color={theme.colors.danger} />
             </Pressable>
           </View>

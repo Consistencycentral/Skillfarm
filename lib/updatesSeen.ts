@@ -39,18 +39,19 @@ async function latestUpdateAt(): Promise<string | null> {
 }
 
 /** Dot on the Notifications tab: true while unseen announcements exist. */
-export function useUnreadUpdates(userId: string | undefined): boolean {
-  const [unread, setUnread] = useState(false);
+export function useUnreadUpdates(userId: string | undefined): number {
+  const [unread, setUnread] = useState(0);
 
   useEffect(() => {
     let alive = true;
-    if (!userId) { setUnread(false); return; }
+    if (!userId) { setUnread(0); return; }
     (async () => {
       const latest = await latestUpdateAt();
       if (!alive) return;
-      if (!latest) { setUnread(false); return; }
+      if (!latest) { setUnread(0); return; }
       const seen = readSeen(userId);
-      setUnread(seen !== latest);
+      // The badge on the Updates tab reads this as a count (0 = no dot).
+      setUnread(seen !== latest ? 1 : 0);
     })();
     return () => { alive = false; };
   }, [userId]);
@@ -58,10 +59,25 @@ export function useUnreadUpdates(userId: string | undefined): boolean {
   return unread;
 }
 
-/** Called by the notifications screen after rendering the list. */
-export async function markUpdatesSeen(userId: string, rows: UpdateRow[]): Promise<void> {
+/**
+ * Called by the notifications screen after rendering the list.
+ * Accepts either full rows (with created_at) or bare ids; when only ids are
+ * available the newest announcement timestamp is looked up instead, so the
+ * badge still clears.
+ */
+export async function markUpdatesSeen(
+  userId: string,
+  rows: Array<UpdateRow | string>
+): Promise<void> {
   if (!userId || rows.length === 0) return;
-  const newest = rows.reduce<string | null>((acc, r) => {
+
+  if (typeof rows[0] === 'string') {
+    const latest = await latestUpdateAt();
+    if (latest) writeSeen(userId, latest);
+    return;
+  }
+  const typed = rows as UpdateRow[];
+  const newest = typed.reduce<string | null>((acc, r) => {
     if (!r.created_at) return acc;
     return !acc || r.created_at > acc ? r.created_at : acc;
   }, null);

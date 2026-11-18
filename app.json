@@ -18,7 +18,18 @@
       "expo-notifications",
       "expo-local-authentication",
       "expo-updates",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "enablePngCrunchInReleaseBuilds": true,
+            "useLegacyPackaging": false
+          }
+        }
+      ]
     ],
     "ios": {
       "supportsTablet": true,

@@ -46,7 +46,7 @@ export default function ProviderAnalyticsScreen() {
   if (loading && !refreshing) return <View style={styles.center}><ActivityIndicator size="large" color={theme.colors.primary} /></View>;
   if (error) return <View style={styles.center}><Text style={styles.empty}>{error}</Text><Pressable style={styles.retry} onPress={() => load()}><Text style={styles.retryText}>Retry</Text></Pressable></View>;
   return <ScrollView style={styles.container} contentContainerStyle={{paddingBottom:28}} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {setRefreshing(true); load(true)}} colors={[theme.colors.primary]} />}>
-    <View style={styles.top}><View><Text style={styles.heading}>Analytics</Text><Text style={styles.sub}>See how your training programmes are performing.</Text></View><Pressable onPress={() => router.back()}><Ionicons name="close-circle-outline" size={25} color={theme.colors.textMuted}/></Pressable></View>
+    <View style={styles.top}><View><Text style={styles.heading}>Analytics</Text><Text style={styles.sub}>See how your training programmes are performing.</Text></View><Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Close circle"><Ionicons name="close-circle-outline" size={25} color={theme.colors.textMuted}/></Pressable></View>
     <View style={styles.hero}><Text style={styles.heroLabel}>Seat fill rate</Text><Text style={styles.heroValue}>{fillPct}%</Text><View style={styles.track}><View style={[styles.fill,{width:`${Math.min(100,fillPct)}%`}]} /></View><Text style={styles.heroSub}>{filled} filled of {capacity || 0} published seats</Text></View>
     <View style={styles.grid}>
       <Metric icon="people-outline" value={registered} label="Registered" />

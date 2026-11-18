@@ -1,11 +1,14 @@
 // Central design tokens for SkillFarm.
-// One place for colour, type, spacing, radius and elevation, so every screen
-// reads as one product. Existing keys are kept (the whole app imports them);
-// new tokens are additive.
+// One place for colour, type, spacing, radius, elevation and motion, so every
+// screen reads as one product. Existing keys are kept (the whole app imports
+// them); new tokens are purely additive.
 //
 // Direction: calm, confident "agri-tech" — deep field green as the single brand
 // colour, warm-neutral surfaces, generous whitespace, and semantic status
 // colours that never borrow from the brand green.
+//
+// Every foreground/background pair in `colors` is checked against WCAG 2.1 AA
+// (4.5:1 body text, 3:1 large text/UI). The table lives in FIGMA_SPEC.md.
 
 export const theme = {
   colors: {
@@ -28,9 +31,12 @@ export const theme = {
     textSubtle: '#8B988F',       // placeholders, disabled, tertiary meta
     overlay: 'rgba(11, 26, 18, 0.45)',
 
-    // Status — each clearly distinct from the brand green
-    success: '#1F8A55',
-    warning: '#B7791F',
+    // Status — each clearly distinct from the brand green.
+    // success/warning were darkened from #1F8A55 / #B7791F because those failed
+    // AA on their own tinted backgrounds (3.84:1 and 3.30:1). Current values
+    // measure 5.17:1 and 4.70:1.
+    success: '#177347',
+    warning: '#96620F',
     danger: '#C0392B',
     info: '#2563A8',
     teal: '#0F766E',
@@ -42,18 +48,34 @@ export const theme = {
     infoBg: '#E6EEF9',
     tealBg: '#DFF3F1',
     neutralBg: '#EEF1EF',
+
+    // Dark palette — additive. The app ships light today (ASSUMPTIONS A13);
+    // these are ready for a `useColorScheme` switch without touching screens.
+    darkBackground: '#0E1512',
+    darkSurface: '#151F1A',
+    darkSurfaceAlt: '#1C2822',
+    darkBorder: '#2A382F',
+    darkBorderStrong: '#3B4C42',
+    darkText: '#E8F2EC',
+    darkTextMuted: '#A9BDB2',
+    darkTextSubtle: '#7E9188',
+    darkPrimary: '#6FBF92',
+    darkPrimaryDark: '#4A9E70',
+    darkPrimaryTint: '#1B2B22',
+    darkOnPrimary: '#0E1512',
   },
 
-  // Registration / booking status → colours + icon. Use <StatusPill status=… />.
+  // Registration / booking status → colours + icon. Use <StatusPill status=... />.
   status: {
-    registered: { fg: '#1F8A55', bg: '#E6F4EC', icon: 'checkmark-circle' },
-    pending:    { fg: '#B7791F', bg: '#FDF3DC', icon: 'time' },
+    registered: { fg: '#177347', bg: '#E6F4EC', icon: 'checkmark-circle' },
+    pending:    { fg: '#96620F', bg: '#FDF3DC', icon: 'time' },
     waitlist:   { fg: '#0F766E', bg: '#DFF3F1', icon: 'hourglass' },
     completed:  { fg: '#2563A8', bg: '#E6EEF9', icon: 'ribbon' },
     cancelled:  { fg: '#5B6A61', bg: '#EEF1EF', icon: 'close-circle' },
     rejected:   { fg: '#C0392B', bg: '#FCEAE8', icon: 'ban' },
   },
 
+  // 8pt-ish spacing rhythm (4 / 8 / 12 / 16 / 24 / 32 / 48).
   spacing: { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, huge: 48 },
 
   radius: { sm: 8, md: 12, lg: 16, xl: 22, pill: 999 },
@@ -62,8 +84,8 @@ export const theme = {
   font: { body: 16, title: 20, heading: 26 },
 
   // Type scale. Spread into a Text style: style={theme.type.h1}
-  // Weights are deliberately restrained (700 for headings, 600 for emphasis)
-  // so the UI feels refined instead of shouty.
+  // Weights are deliberately restrained (700/800 headings, 600 emphasis) so the
+  // UI feels refined instead of shouty.
   type: {
     display:  { fontSize: 30, lineHeight: 36, fontWeight: '800', letterSpacing: -0.6 },
     h1:       { fontSize: 24, lineHeight: 30, fontWeight: '800', letterSpacing: -0.4 },
@@ -95,6 +117,22 @@ export const theme = {
       elevation: 6,
     },
   },
+
+  // Motion — used by components/motion.tsx. Durations in ms, easings as
+  // react-native Easing presets. Everything is optional so existing calls keep
+  // their current feel; new interfaces should read from here.
+  motion: {
+    instant: 90,
+    fast: 140,
+    normal: 220,
+    slow: 320,
+    press: { scale: 0.97, speed: 50, bounciness: 7 },
+    enter: { from: 8, opacityFrom: 0, duration: 240 },
+  },
+
+  // Minimum interactive sizes. 44 is the iOS HIG floor, 48 the Material one;
+  // the app uses 48 so the two platforms feel the same.
+  touch: { min: 44, comfortable: 48, iconButton: 44 },
 } as const;
 
 export type AppTheme = typeof theme;

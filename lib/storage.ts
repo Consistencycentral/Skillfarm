@@ -14,7 +14,9 @@ import { supabase } from './supabase';
 
 // Every bucket in the project. Kept as a union so a typo becomes a type error
 // rather than a 404 at upload time.
-export type ImageBucket = 'org-logos' | 'course-images' | 'avatars';
+// 'course-certificates' holds provider-issued certificates attached to a course;
+// it was added with the v12 line and is required by course-edit.tsx.
+export type ImageBucket = 'org-logos' | 'course-images' | 'avatars' | 'course-certificates';
 
 export interface UploadedImage {
   url: string;
@@ -46,6 +48,29 @@ export async function pickAndUploadImage(
 
   const local = result.assets[0];
   return uploadImageFromUri(bucket, uid, local.uri);
+}
+
+// Pick a certificate file/image and upload it to the course-certificates bucket.
+// Used by the provider course editor. Returns null when the user cancels.
+// `name` is the original file name, shown in the editor next to the file.
+export async function pickAndUploadCertificate(
+  uid: string,
+): Promise<UploadedImage & { name: string } | null> {
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (status !== 'granted') {
+    throw new Error('Photo permission is needed to attach a certificate.');
+  }
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: false,
+    quality: 0.9,
+  });
+  if (result.canceled || !result.assets || result.assets.length === 0) return null;
+
+  const uri = result.assets[0].uri;
+  const name = decodeURIComponent(uri.split('/').pop() || 'Certificate');
+  const uploaded = await uploadImageFromUri('course-certificates', uid, uri);
+  return { ...uploaded, name };
 }
 
 // Upload an arbitrary image URI (used for the multi-image course picker).

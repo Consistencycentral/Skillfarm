@@ -174,7 +174,7 @@ export default function ProviderCoursesScreen() {
                   >
                     <Ionicons name="folder-open-outline" size={18} color={theme.colors.primary} />
                   </Pressable>
-                  <Pressable style={styles.deleteBtn} onPress={(e) => { e.stopPropagation?.(); handleDelete(item); }}>
+                  <Pressable style={styles.deleteBtn} onPress={(e) => { e.stopPropagation?.(); handleDelete(item); }} accessibilityRole="button" accessibilityLabel="Delete">
                     <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
                   </Pressable>
                 </View>

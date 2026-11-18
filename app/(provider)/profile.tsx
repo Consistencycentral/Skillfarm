@@ -382,7 +382,7 @@ function ProviderProfileInner() {
                       {t.experience ? <Text style={styles.trainerMeta}>Experience · {t.experience}</Text> : null}
                       {t.expertise ? <Text style={styles.trainerMeta}>Expertise · {t.expertise}</Text> : null}
                     </View>
-                    <Pressable onPress={() => onDeleteTrainer(t.id)} style={styles.trainerDelete}>
+                    <Pressable onPress={() => onDeleteTrainer(t.id)} style={styles.trainerDelete} accessibilityRole="button" accessibilityLabel="Delete">
                       <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
                     </Pressable>
                   </View>
