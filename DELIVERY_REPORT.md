@@ -81,6 +81,28 @@ Fix:
    - production: update group `d87bcf49-c5b0-4dbd-8d6c-a1a52c90f02a`
    (runtime 1.7.4). The APK picks this up on next cold start with network.
 
+## W7 — Polish delivered
+- **Rich link previews (real, not placeholders):** `functions/_middleware.js`
+  (Cloudflare Pages Function) rewrites OG/Twitter tags at the edge.
+  Verified live:
+  - `/course/8b53a218…` → `Mushroom cultivation — Coimbatore, Tamilnadu | SkillFarm`
+  - `/org/13c3650c…` → `Greenfields agro academy — The city | SkillFarm`
+  - `/` and `/login` → site-wide card
+- `public/og-image.png` — 1200×630 branded card (verified visually).
+- `public/_headers` — immutable caching for hashed assets; baseline security headers.
+- `public/robots.txt` + generated `dist/sitemap.xml` (1 course + 14 orgs + landing).
+- `SIZE_REPORT.md` — measured payload: 6.0 MB → **5.4 MB** (−3.52 MB of unused icon fonts).
+- Build hardened: `npm run build:web` wipes `dist/` first (an `eas update` had once
+  left a 45 MB mixed-platform export in place).
+
+## Still open
+- **OG/Twitter validator pass-through** requires the external validators to fetch
+  the URL; the tags and image are confirmed present over HTTP but a Facebook/
+  Twitter validator run needs a manual paste (their crawlers block scripted calls).
+- `app/+html.tsx` is committed but the SPA export does not consume it (Expo uses
+  it only for static rendering). It is harmless and becomes active if the app is
+  switched to `web.output: "static"`. The edge function covers the need today.
+
 ## BLOCKED (1 item)
 - `git push origin main` → 403: the stored GitHub PAT has no write access to
   `Consistencycentral/Skillfarm`. Fix: create a fine-grained PAT with
