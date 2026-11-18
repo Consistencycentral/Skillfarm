@@ -18,7 +18,9 @@ export const theme = {
     primaryLight: '#CFE6D6',
     primaryTint: '#EAF3ED',      // soft green wash for selected / highlighted rows
     onPrimary: '#FFFFFF',
-    accent: '#2B7A9B',
+    // Darkened from #2B7A9B: on Surface Alt it measured 4.32:1 (AA needs 4.5).
+    // #266E8B gives 5.11:1 on Surface Alt and 5.70:1 on Surface.
+    accent: '#266E8B',
 
     // Neutrals
     background: '#F6F8F6',

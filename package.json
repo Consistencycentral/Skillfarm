@@ -8,7 +8,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build:web": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && expo export --platform web && node scripts/post-export-fix.mjs && node scripts/gen-sitemap.mjs",
+    "build:web": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && expo export --platform web && node scripts/post-export-fix.mjs && node scripts/subset-icons.mjs && node scripts/gen-sitemap.mjs",
     "deploy:web": "npm run build:web && wrangler pages deploy dist --project-name skillfarm --branch main --commit-dirty=true"
   },
   "dependencies": {
@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.10",
+    "subset-font": "^2.9.0",
     "typescript": "~5.9.2"
   }
 }

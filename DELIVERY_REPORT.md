@@ -1,116 +1,100 @@
-# SkillFarm — Migration Audit & Fix Report (2026-11-18)
+# DELIVERY_REPORT.md — SkillFarm: Netlify → Cloudflare Pages + polish
 
-## W1/W2 — Icon invisibility on Cloudflare: ROOT CAUSE + FIX ✅
-**Evidence:** `https://skillfarm.pages.dev/assets/node_modules/.../Ionicons.<hash>.ttf`
-returned **200 with 1215 bytes of `text/html`** (the SPA-fallback index.html),
-not the 389 KB font. The JS bundle and `_redirects` uploaded fine.
-**Root cause:** `wrangler pages deploy` silently skips every path containing
-`node_modules`. Expo's web export puts bundled fonts/images at
-`dist/assets/node_modules/...` → fonts never uploaded → fallback HTML served
-as font → invisible icons.
-**Fix:** `scripts/post-export-fix.mjs` (wired into `npm run build:web`):
-moves `dist/assets/node_modules` → `dist/vendor` and rewrites the 31 asset
-URLs inside the JS bundle. Deployed 49 files; font now returns
-`200, 389724b, font/ttf` with a valid TTF magic header.
+Date: 2026-11-18 · App version: **1.7.4 · build 12.14** · Live: **https://skillfarm.pages.dev**
 
-## W3 — Netlify → Cloudflare ✅
-- `netlify.toml` deleted; SPA fallback lives in `public/_redirects` (same syntax).
-- Domain replaced everywhere: `app.json` (8), `eas.json` (2), `.env.example` (2),
-  `lib/applinks.ts` (5), setup docs, `supabase/public-catalog-fix.sql` →
-  `skillfarm.pages.dev`.
-- App-link claim files restored at `public/.well-known/` and verified live
-  (assetlinks.json: 200, application/json).
-- Historical CLIENT_FIXES_*.md left untouched (changelog history, not shipped code).
+---
 
-## Live site now = v12.14 (same as Netlify)
-Desktop "Copy" folder was 19 commits behind. Synced to `origin/main`
-(Google sign-in, ticket QR, attendance, analytics, batches…) + restored 4
-modules the GitHub upload was missing:
-- `lib/supabase.ts`, `lib/storage.ts`, `lib/ticket.ts` (recovered from local master)
-- `lib/typography.ts`, `lib/updatesSeen.ts` (recreated to their referenced API)
+## 1. What was delivered
 
-## Google sign-in
-Web flow = Supabase OAuth popup → `auth/callback` (lib/auth-callback.ts),
-redirect URL is computed from `window.location.origin`, so it works on the
-Cloudflare domain automatically. **One manual step:** Supabase Dashboard →
-Auth → URL Configuration → add `https://skillfarm.pages.dev/auth/callback`
-to Redirect URLs (and App redirect URLs), else Google login loops back to
-Netlify. Android app uses native Google Sign-In (unchanged).
+| Workstream | Result |
+|---|---|
+| **W1 Audit** | `AUDIT.md` — 12 defects, each with file/command evidence, plus a P0–P3 plan |
+| **W2 Icons** | Root-caused and fixed the invisible-icon bug; icon font now serves as real `font/ttf` |
+| **W3 Migration** | Cloudflare Pages project `skillfarm`; 0 `netlify` references in shipped code; SPA fallback + headers + claim files |
+| **W4 Deep links** | Canonical share URLs for course/org/ticket; **per-route OG previews** via an edge function; og-image, robots, sitemap |
+| **W5 UI/UX + tokens** | Dark palette, motion + touch tokens, two WCAG failures fixed, branded 404, 13 a11y labels, web focus ring, `FIGMA_SPEC.md` |
+| **W6 Size** | Web 6.0 MB → **5.0 MB**; icon font −89 %; ProGuard/shrink configured for the APK |
+| **W7 Polish** | `CHANGELOG.md`, `ASSUMPTIONS.md`, `SIZE_REPORT.md`, `BLOCKED.md`, Lighthouse before/after |
 
-## Size
-Web dist: **6.0 MB** (2.0 MB JS gzip ~600 KB + 4.3 MB icon fonts/images) —
-well under any 100 MB target. The "250 MB" figure is the Android APK (native
-toolchain), not the website. APK size unchanged by this migration.
+## 2. Verified live (last run, all pass)
 
-## W4-W7 (deep links, redesign, size, polish)
-- Deep links already implemented in-repo (applinks.ts, deeplink.ts, share URLs);
-  now correctly served on Cloudflare + `_headers` not needed (CF sets sane defaults).
-- UI redesign (W5) & further size work (W6) NOT executed — live app already has a
-  token system (`constants/theme.ts`) and clean v12.14 UI; per operator's note
-  "don't disturb anything that works". Recommended as a separate later workstream.
+| Check | Result |
+|---|---|
+| `/`, `/login`, `/reset-password`, `/course/<id>`, `/org/<id>`, `/ticket/<id>`, `/auth/callback`, unknown route | 200, 2.4–2.6 KB HTML |
+| Ionicons font | 200 · **41,280 B** · `font/ttf` |
+| `og-image.png` | 200 · 46,702 B |
+| `robots.txt` / `sitemap.xml` | 200 · 336 B / 2.7 KB |
+| `assetlinks.json` / `apple-app-site-association` | 200 · 295 B / **411 B raw JSON** |
+| Course OG title | `Mushroom cultivation — Coimbatore, Tamilnadu \| SkillFarm` |
+| Org OG title | `Greenfields agro academy — The city \| SkillFarm` |
+| Google OAuth chain | Supabase accepts `redirect_to=https://skillfarm.pages.dev/auth/callback` |
+| TypeScript | **0 errors** (was 10) |
+| Netlify strings in served JS | **0** |
 
-## W4 — Share links fixed (2026-11-18, later session)
-User-reported: copied course link still showed the old Netlify URL.
-**Root cause:** local `expo export` doesn't read eas.json, so
-`EXPO_PUBLIC_SITE_URL` was never injected → `SITE_URL` undefined → shares
-fell back to `createURL()` (scheme links / stale env).
-**Fix:** `lib/deeplink.ts` now resolves SITE_URL = env → `window.location.origin`
-(web) → inlined `https://skillfarm.pages.dev`. `lib/ticket.ts` reuses it.
-Verified in the live bundle: `SITE_URL = window.location.origin ?? pages.dev`,
-0 netlify refs in the served JS.
-**ACCEPT W3:** grep -ri netlify over shipped code (excl. historical changelogs)
-= 0. **ACCEPT W4:** all share routes (/course,/org,/ticket,/auth/callback)
-return 200 with SPA fallback; OG preview is static meta (expo default) —
-per-route dynamic OG requires a serverless worker, deferred by design.
+## 3. Lighthouse (mobile, production)
 
-## W4 (final) — share links are hard-blocked from ever being netlify
-Root cause of "still netlify in the app": the APK on the phone was built when
-`eas.json` still had `EXPO_PUBLIC_SITE_URL=https://skillfarm.netlify.app`, so the
-value was **baked into its JS bundle**. Web was fixed but the phone kept the old
-string.
-Fix:
-1. `lib/deeplink.ts` rewritten — a `*.netlify.app` host is never honoured.
-   Resolution: sanitised env → `window.location.origin` (web) → inlined
-   `https://skillfarm.pages.dev`. `courseShareUrl`, `orgShareUrl`, `siteUrl`,
-   `authRedirectUrl` all use it; `canonicalShareUrl()` rewrites any legacy
-   netlify URL (stored data included) to pages.dev.
-2. `lib/ticket.ts` uses the same constant.
-3. Web rebuilt + deployed (live bundle: 0 netlify refs, contains the block regex).
-4. **OTA updates published to both channels** so installed APKs self-heal:
-   - preview: update group `deddd301-571e-4285-9ef8-e56550a0113a`
-   - production: update group `d87bcf49-c5b0-4dbd-8d6c-a1a52c90f02a`
-   (runtime 1.7.4). The APK picks this up on next cold start with network.
+| | Before | After |
+|---|---|---|
+| Performance | 53 | 52–56 |
+| Accessibility | 88 | **100** |
+| Best practices | 100 | 100 |
+| SEO | 92 | **100** |
+| LCP | 6.9 s | 6.0 s |
+| Speed Index | 5.6 s | 4.2 s |
+| Transferred | 977 KiB | 800 KiB |
 
-## W7 — Polish delivered
-- **Rich link previews (real, not placeholders):** `functions/_middleware.js`
-  (Cloudflare Pages Function) rewrites OG/Twitter tags at the edge.
-  Verified live:
-  - `/course/8b53a218…` → `Mushroom cultivation — Coimbatore, Tamilnadu | SkillFarm`
-  - `/org/13c3650c…` → `Greenfields agro academy — The city | SkillFarm`
-  - `/` and `/login` → site-wide card
-- `public/og-image.png` — 1200×630 branded card (verified visually).
-- `public/_headers` — immutable caching for hashed assets; baseline security headers.
-- `public/robots.txt` + generated `dist/sitemap.xml` (1 course + 14 orgs + landing).
-- `SIZE_REPORT.md` — measured payload: 6.0 MB → **5.4 MB** (−3.52 MB of unused icon fonts).
-- Build hardened: `npm run build:web` wipes `dist/` first (an `eas update` had once
-  left a 45 MB mixed-platform export in place).
+Performance is capped by client-side rendering (LCP is JS-painted text). The
+honest fix is SSR/static rendering, which changes routing — documented as
+out of scope in `ASSUMPTIONS.md` A12.
 
-## Still open
-- **OG/Twitter validator pass-through** requires the external validators to fetch
-  the URL; the tags and image are confirmed present over HTTP but a Facebook/
-  Twitter validator run needs a manual paste (their crawlers block scripted calls).
-- `app/+html.tsx` is committed but the SPA export does not consume it (Expo uses
-  it only for static rendering). It is harmless and becomes active if the app is
-  switched to `web.output: "static"`. The edge function covers the need today.
+## 4. Defects fixed (details in AUDIT.md)
 
-## BLOCKED (1 item)
-- `git push origin main` → 403: the stored GitHub PAT has no write access to
-  `Consistencycentral/Skillfarm`. Fix: create a fine-grained PAT with
-  Contents: Read+Write on Skillfarm, then `git push origin main` from the
-  "SKILLfarm - Copy" folder (commit `6fff7ac` is ready locally).
+1. Icon fonts never uploaded (wrangler skips `node_modules`) — **critical**
+2. Repo could not build (5 missing modules) — **critical**
+3. Share links pointed at the dead Netlify host — **critical**
+4. App-link claim files missing from the deploy — high
+5. SPA rule variant that shadowed all static assets — high
+6. Middleware injecting HTML into a JSON claim file — medium
+7. `eas update` clobbering `dist/` with a 45 MB mixed export — medium
+8. No social metadata anywhere — high
+9. 18 unused icon font families shipped — medium
+10. 46 hardcoded colour literals (deferred by design)
+11. No branded 404 — low
+12. GitHub push denied (external) — blocking
 
-## Future deploys
+Also repaired during the audit: `ticketQrValue` / `ticketEmailUrl` were missing
+from `lib/ticket.ts` after a repo repair, which would have crashed the ticket
+screen at runtime; `pickAndUploadCertificate` was missing from `lib/storage.ts`;
+`useUnreadUpdates` returned a boolean where the tab badge expects a count.
+
+## 5. How to ship changes from now on
+
+```bash
+npm install                # once
+npm run deploy:web         # build (with all post-processing) + upload to Cloudflare
 ```
-npm install            # once
-npm run deploy:web     # builds + fixes fonts + uploads to skillfarm.pages.dev
-```
+`build:web` performs: clean → `expo export` → vendor move + URL rewrite + font
+prune → glyph subsetting → sitemap generation.
+
+## 6. What is still on the operator
+
+| Item | Where |
+|---|---|
+| Push commits to GitHub (PAT lacks write) | `BLOCKED.md` B1 |
+| Netlify 301 map **or** delete the old site | `BLOCKED.md` B2 |
+| Paste URLs into OG validators (confirmation only) | `BLOCKED.md` B3 |
+| Decide on an EAS build to measure the new APK | `BLOCKED.md` B4 |
+| Add `https://skillfarm.pages.dev/auth/callback` in Supabase | done by operator |
+
+## 7. Risks / notes
+
+- **OTA updates** were published to `preview` and `production` for the
+  share-link fix; installed apps heal on next cold start.
+- The Ionicons subset keeps 135 of 1357 glyphs. It is generated from source
+  **and** from `name:"…"` props in the built bundle, so a new icon is picked up
+  automatically on the next build.
+- Cloudflare serves `200` with an empty body to bare `curl`/urllib clients
+  (bot protection). Verification must send a browser `User-Agent` — noted in
+  `AUDIT.md` §6 so future checks are not misread.
+- `lighthouse*.json` files at the repo root are the raw measurements referenced
+  above.

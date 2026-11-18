@@ -133,10 +133,24 @@ function inject(html, meta) {
       `<meta name="twitter:title" content="${t}" />`,
       `<meta name="twitter:description" content="${d}" />`,
       `<meta name="twitter:image" content="${OG_IMAGE}" />`,
+      `<meta name="description" content="${d}" />`,
       `<link rel="canonical" href="${u}" />`,
     ].join('\n    ');
     out = out.replace('</head>', `    ${block}\n  </head>`);
   }
+
+  // Start fetching the app bundle while the HTML is still parsing. The shell
+  // puts the module script at the end of <body>, so without this hint the
+  // browser does not request it until the parser gets there — on a 3G-class
+  // connection that is hundreds of ms of LCP.
+  const entry = html.match(/src="([^"]*entry-[^"]*\.js)"/i);
+  if (entry && !out.includes('rel="preload" as="script"')) {
+    out = out.replace(
+      '</head>',
+      `    <link rel="preload" as="script" href="${entry[1]}" crossorigin />\n  </head>`
+    );
+  }
+
   return out;
 }
 

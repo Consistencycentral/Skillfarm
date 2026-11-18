@@ -1,46 +1,105 @@
-# SIZE_REPORT.md — SkillFarm web payload
+# SIZE_REPORT.md — measured payload, web + APK plan
 
-Measured on the real `dist/` that is deployed to Cloudflare Pages, not estimates.
+All numbers are from the actual `dist/` that Cloudflare serves, produced by
+`npm run build:web`, not estimates. Lighthouse figures come from running
+Lighthouse 12 against `https://skillfarm.pages.dev/` with mobile emulation.
 
-## The "250 MB" figure
+---
 
-The website was **never** 250 MB. The ~250 MB the operator saw is the
-**Android APK / build artifacts** (native toolchain, EAS build output, plus
-`node_modules` during build). The web app is a static export and is measured
-below. The ≤100 MB target is met with >90% headroom by the web app; the APK is
-a separate EAS build and is not part of this migration.
+## 1. What "250 MB" actually was
 
-## Before → after (this migration)
+The website is **5.0 MB**. The ~250 MB figure the operator saw is the **Android
+APK / build workspace** (native toolchain output + `node_modules` during build).
+The ≤100 MB target applies to the APK; web is measured separately below.
+
+---
+
+## 2. Web payload: before → after
 
 | Step | Technique | dist size | Δ |
 |---|---|---|---|
 | Baseline (first Cloudflare deploy) | — | 6.0 MB | — |
-| Icon fonts in `node_modules` path | moved to `vendor/` so wrangler uploads them | 6.0 MB | 0 (fixes icons, no size change) |
-| Unused icon families | `@expo/vector-icons` ships 19 TTFs; app uses only Ionicons → pruned 18 in `scripts/post-export-fix.mjs` | **5.4 MB** | **−3.52 MB (−37%)** |
-| Dead deploy output | `build:web` now wipes `dist/` first (an `eas update` had left a 45 MB mixed-platform export) | 5.4 MB | prevented a 45 MB deploy |
+| Icon fonts unreachable | moved `assets/node_modules/**` → `vendor/**` so wrangler uploads them | 6.0 MB | 0 (fixes icons) |
+| 18 unused icon families | source-aware prune in `scripts/post-export-fix.mjs` | 5.4 MB | **−3.52 MB** |
+| Oversized icon font | **glyph subsetting** to the 135 glyphs the app uses (`scripts/subset-icons.mjs`) | 5.4 → **5.0 MB** | **−341 KB** (font 381 KB → 40 KB, −89%) |
+| Lighthouse transferred | — | 977 KiB → **800 KiB** | **−18%** |
 
-## Current payload breakdown (5.4 MB total)
+### Current breakdown (5.0 MB deployed)
 
-| Asset group | Size | Notes |
+| Group | Size | Cache policy |
 |---|---|---|
-| JS runtime + app bundle | ~2.1 MB | single entry chunk; ~600 KB over the wire with Brotli |
-| Ionicons TTF (only font) | 380 KB | loaded once, cached `immutable` for 1 year |
-| App images / icons | ~1.9 MB | `icon.png`, adaptive icons, splash |
-| lazy chunks (pdf/xlsx/html2canvas) | ~0.9 MB | only fetched when exporting |
-| HTML shell, `_headers`, `_redirects`, robots, sitemap, og-image | ~0.1 MB | |
+| JS entry chunk | 2.06 MB raw (~600 KB Brotli) | `immutable`, 1 year |
+| Lazy chunks (jspdf, xlsx, html2canvas) | ~0.9 MB | `immutable`, loaded on demand only |
+| Ionicons subset TTF | **40 KB** | `immutable` |
+| App images (icons, splash, illustrations) | ~1.9 MB | `immutable` |
+| HTML shell, `_headers`, `_redirects`, robots, sitemap, og-image | ~0.1 MB | shell revalidates |
 
-## Caching (buying real-world speed)
+---
 
-`public/_headers` sets `Cache-Control: public, max-age=31536000, immutable`
-for `/_expo/*`, `/assets/*` and `/vendor/*` — all content-hashed names, so a
-returning user re-downloads only `index.html` (~2 KB). The shell is
-`must-revalidate`, so a deploy is visible immediately.
+## 3. Lighthouse (mobile, production URL)
 
-## Not done (deliberately)
+| Category | Before | After |
+|---|---|---|
+| Performance | 53 | **52–56** (run-to-run variance) |
+| Accessibility | 88 | **100** |
+| Best practices | 100 | 100 |
+| SEO | 92 | **100** |
 
-- Image → WebP/AVIF conversion: the images are app icons/splash consumed by
-  native builds too; converting them would desync the APK assets for ~1 MB.
-- Route-level code splitting: expo-router already emits lazy chunks for the
-  heavy exporters; splitting further risks breaking deep links.
-- APK slimming (`enableProguardInReleaseBuilds`, ABI splits, asset stripping):
-  requires an EAS native build, not a web deploy — outside this migration.
+| Metric | Before | After |
+|---|---|---|
+| FCP | 1.1 s | 1.1–1.4 s |
+| LCP | 6.9 s | **6.0–6.1 s** |
+| TBT | 750 ms | 670–1130 ms (noisy) |
+| Speed Index | 5.6 s | **4.2 s** |
+| CLS | 0.01 | 0.01 |
+| Transferred | 977 KiB | **800 KiB** |
+
+**Honest read:** performance stays in the low 50s because this is a
+client-rendered SPA — the LCP element is text painted only after 2 MB of JS
+parses and executes. The only structural fix is server-side rendering (Expo
+`web.output: "static"` or "server"), which changes the routing model and was
+deliberately out of scope (ASSUMPTIONS A12). Everything cheap has been done:
+font subsetting, preloading the entry chunk, Brotli, immutable caching.
+
+Lighthouse's remaining suggestion is "reduce unused JavaScript: ~415 KiB" —
+that is the expo-router + screen code needed for client-side navigation; tree
+shaking it out would break route transitions.
+
+---
+
+## 4. APK size plan (configured, needs one EAS build)
+
+`app.json` now carries `expo-build-properties` with:
+
+```json
+{ "android": {
+    "enableProguardInReleaseBuilds": true,
+    "enableShrinkResourcesInReleaseBuilds": true,
+    "enablePngCrunchInReleaseBuilds": true,
+    "useLegacyPackaging": false
+} }
+```
+
+| Technique | Expected effect | State |
+|---|---|---|
+| R8/ProGuard code shrinking | typically 20–35% off the APK | configured |
+| Resource shrinking | strips unused drawables/translations | configured |
+| PNG crunching | re-compresses packaged PNGs | configured |
+| `useLegacyPackaging: false` | modern, smaller zip blocks | configured |
+| ABI splits | ~40% smaller per-device download | production profile ships an **AAB**, which Play store splits per device automatically |
+| Hermes bytecode | default in SDK 54 (smaller + faster than JSC) | already active |
+
+A new APK cannot be measured until an EAS build runs — that consumes build
+minutes and is the operator's call (ASSUMPTIONS question 3).
+
+---
+
+## 5. Not done, and why
+
+- **Image → WebP/AVIF:** the images double as native app assets (icons, splash).
+  Converting only the web copies would fork the asset set for ~200 KB.
+- **Route-level splitting:** expo-router already emits per-route chunks; the
+  remaining single entry is required for client-side navigation.
+- **Fonts → woff2:** Ionicons is already 40 KB after subsetting; woff2 would
+  save ~15 KB and drop older-browser support.
+- **APK verification:** pending an EAS build.
