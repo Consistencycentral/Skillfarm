@@ -1,72 +1,107 @@
 // ===========================================================================
-// courseShareUrl — the URL a learner should receive when a course is shared
-// (WhatsApp/SMS/copy). Two shapes depending on configuration:
+// Share URLs — the link a learner receives when a course, an organisation or
+// a ticket is shared (WhatsApp / SMS / copy-link).
 //
-//   • If EXPO_PUBLIC_SITE_URL is set (e.g. https://skillfarm.app once the web
-//     export is deployed), sharing produces a normal https link. Clicking it on
-//     a phone opens the website; the website is the same app bundle
-//     (expo export -web), so signed-in users land straight on the course, and
-//     signed-out visitors see the landing and sign in.
+// HISTORY / ROOT CAUSE (do not regress):
+//   This module used to read EXPO_PUBLIC_SITE_URL and nothing else. That env
+//   var was baked as https://skillfarm.netlify.app into the APK that is
+//   installed on users' phones, so shares kept emitting dead Netlify links
+//   long after the site moved to Cloudflare Pages. Local `expo export` for
+//   web does not read eas.json at all, so the web build saw no value and fell
+//   back to bare scheme links.
 //
-//   • Without a deployed site (today: Expo Go pilot), we fall back to the
-//     app's own deep link, built with expo-linking so it always matches the
-//     `skillfarm` scheme declared in app.json. Expo Go registers that scheme,
-//     so on a device that has the project open the link jumps straight into the
-//     Course Details screen. A device without the app simply can't open it —
-//     which is exactly why setting EXPO_PUBLIC_SITE_URL is the upgrade path.
+//   Fix = three layers, strongest last:
+//     1. env var, but SANITISED — a netlify host is never honoured;
+//     2. on web, the true runtime origin (window.location.origin);
+//     3. inlined production origin, used by any native build.
+//   Any legacy *.netlify.app string that still arrives from stored data or an
+//   old OTA bundle is rewritten to the Cloudflare origin by canonicalShareUrl.
 // ===========================================================================
 import { createURL } from 'expo-linking';
 import { Platform } from 'react-native';
 
-// Root cause of the "share still showed the old domain" bug: the web export
-// is built WITHOUT EXPO_PUBLIC_SITE_URL injected (local `expo export` doesn't
-// read eas.json), so SITE_URL was undefined and shares fell back to
-// createURL()/stale env values. The production web origin is stable, so it is
-// inlined as the fallback — same env-first + inlined-fallback pattern as
-// lib/supabase.ts. On native the env var (injected by EAS) still wins so a
-// custom domain can replace pages.dev without a code change.
-const INLINED_SITE_URL = 'https://skillfarm.pages.dev';
+/** Canonical production web origin (Cloudflare Pages). */
+export const PROD_SITE_URL = 'https://skillfarm.pages.dev';
 
-const SITE_URL: string | undefined =
-  process.env.EXPO_PUBLIC_SITE_URL ??
-  // On web there is exactly one correct answer: the origin the site is
-  // actually served from — even if someone previews a build elsewhere.
-  (Platform.OS === 'web' && typeof window !== 'undefined'
-    ? window.location.origin
-    : INLINED_SITE_URL);
+/** Hosts that must never appear in a share link again. */
+const DEAD_HOST_PATTERN = /(^|\.)skillfarm\.netlify\.app$/i;
 
-export function courseShareUrl(id: string): string {
-  // Deployed web origin wins (universal link, opens app or falls back to web).
-  if (SITE_URL) return `${SITE_URL.replace(/\/+$/, '')}/course/${id}`;
-  return createURL(`/course/${id}`);
+/** Strip trailing slashes so callers can concatenate safely. */
+const trimSlash = (u: string): string => u.replace(/\/+$/, '');
+
+/** True when the string is an http(s) URL we are willing to share. */
+function isUsableOrigin(value: string | undefined | null): value is string {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+    return !DEAD_HOST_PATTERN.test(url.hostname);
+  } catch {
+    return false;
+  }
 }
 
 /**
- * Shareable organization link. Same web-first resolution as courseShareUrl:
- * with a deployed site, tapping "Share" on a Learning Partner's card sends
- * everyone an https://yoursite/org/<id> page that works in any browser.
+ * Resolve the share origin once, at module load.
+ * Never throws; never returns a dead Netlify host.
  */
-export function orgShareUrl(id: string): string {
-  if (SITE_URL) return `${SITE_URL.replace(/\/+$/, '')}/org/${id}`;
-  return createURL(`/org/${id}`);
+const SITE_URL: string = (() => {
+  const fromEnv = process.env.EXPO_PUBLIC_SITE_URL;
+  if (isUsableOrigin(fromEnv)) return trimSlash(fromEnv);
+
+  // Web: the origin the bundle is actually being served from is always right.
+  if (Platform.OS === 'web' && typeof window !== 'undefined' && isUsableOrigin(window.location.origin)) {
+    return trimSlash(window.location.origin);
+  }
+
+  return PROD_SITE_URL;
+})();
+
+/**
+ * Rewrite any legacy/dead share URL to the canonical Cloudflare origin.
+ * Used on values that come from stored data (org website fields, old shares
+ * saved in a database row) so a Netlify link can never leak out again.
+ */
+export function canonicalShareUrl(url: string): string {
+  if (!url) return url;
+  try {
+    const parsed = new URL(url);
+    if (DEAD_HOST_PATTERN.test(parsed.hostname)) {
+      return `${PROD_SITE_URL}${parsed.pathname}${parsed.search}${parsed.hash}`;
+    }
+    return url;
+  } catch {
+    // Not an absolute URL (scheme link such as skillfarm://course/1) — leave it.
+    return url;
+  }
 }
 
-/** Absolute URL of the public web landing, for email/footer copy. */
+/** Public, shareable URL for a course. */
+export function courseShareUrl(id: string): string {
+  return `${SITE_URL}/course/${id}`;
+}
+
+/** Public, shareable URL for a Learning Partner (organisation) page. */
+export function orgShareUrl(id: string): string {
+  return `${SITE_URL}/org/${id}`;
+}
+
+/** Public URL of the web landing page, for email/footer copy. */
 export function siteUrl(): string {
-  return SITE_URL ?? createURL('/');
+  return SITE_URL;
 }
 
 /**
- * Auth redirect URL (password recovery). Prefers the deployed web origin:
- * a reset email must open on whatever device the user checks it on — their
- * phone, a laptop, a friend's tablet — which a native-only scheme link or a
- * localhost dev URL cannot do. Once EXPO_PUBLIC_SITE_URL is set, requests
- * sent from the APK point at https://yoursite/reset-password; the user sets
- * the new password in the web app (same Supabase project, same session
- * model) and then just signs into the app with the new password. Falls back
- * to the in-app deep link while no site is deployed yet (dev on localhost).
+ * Auth redirect URL (Google OAuth + password recovery). Must be the deployed
+ * https origin: a reset mail has to open on whatever device the user checks it
+ * on, which a native-only scheme link cannot do.
  */
 export function authRedirectUrl(path: string): string {
-  if (SITE_URL) return `${SITE_URL.replace(/\/+$/, '')}${path}`;
+  const suffix = path.startsWith('/') ? path : `/${path}`;
+  return `${SITE_URL}${suffix}`;
+}
+
+/** Kept for callers that still want the expo-linking form (dev only). */
+export function appSchemeUrl(path: string): string {
   return createURL(path);
 }
